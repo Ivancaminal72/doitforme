@@ -1,7 +1,7 @@
 #!/bin/bash
 downsampling=1
-data_dir="/imatge/icaminal/datasets/2018-slam/kitti/generated"
-outputs="/imatge/icaminal/outputs/phd/kitti/rtab"
+data_dir="$HOME/datasets/kitti/generated"
+outputs="$HOME/outputs/phd/kitti/rtab"
 seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
 #inlier_dist_a=("0.4" "3.2" "0.6" "0.7" "0.7" "0.5" "6.0" "0.3" "1.3" "1.9" "0.4") #gftt/brief
 #inlier_dist_a=("0.4" "1.6" "0.5" "0.3" "1.2" "0.4" "1.3" "0.3" "0.6" "1.0" "0.4") #gftt/brief downsampling2
@@ -12,18 +12,19 @@ seq_a="07"
 dot_a=("f2m") #Odometry_stragegy {0=Frame-to-Map (F2M) 1=Frame-to-Frame (F2F) 2=Fovis 3=viso2 4=DVO-SLAM 5=ORB_SLAM2}
 
 max_inlierdist=6
-depth_scale=1
+depth_scale=1.0
 gftt_dist=6
 #gftt_dist=2 #downsampling2 GFTT.MinDistance/dw^2
 
-#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula" (dependencies installed with puppet)
-#cd /imatge/icaminal/workspace/rgbd-dataset_rtab-map/build (not needed --> binaries in $PATH)
+#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula" (current dependencies installed with puppet)
+cd $HOME/workspace/PHD/rtabmap/rgbd-dataset_rtab-map/build
 
+#Without loop closure
 for ((i=0;i<${#seq_a[@]};++i)); do
 	gen_dir=$data_dir/${seq_a[i]}
 	out_dir=$outputs/${seq_a[i]}_${downsampling}
 	calib=$data_dir/${seq_a[i]}/calib_${downsampling}.000000.txt
-	rm -f $out_dir/*rtabmap*
+	rm -rf $out_dir/*
 	mkdir -p $out_dir/worker/
     echo -e "\n\n Running sequence: $gen_dir"
 
@@ -34,10 +35,9 @@ for ((i=0;i<${#seq_a[@]};++i)); do
 			out_name=$downsampling.rtabmap.poses.$inlierdist.${dot_a[j]}
 			printf "\nTrying inlier distance --> $inlierdist\n"
 
-			#Without loop closure
 			printf "\n${dot_a[j]} "
 
-			srun --mem=8GB -c 4 ./rgbd_dataset \
+			srun -p gpi.develop --mem=8GB -c4 ./rgbd_dataset \
 			--output $out_dir \
 			--outname $out_name \
 			--imagename "visible"\
@@ -93,7 +93,6 @@ done
 
 :'
 #With loop closure
-
 for ((i=0;i<${#seq_a[@]};++i)); do
 	gen_dir=$data_dir/${seq_a[i]}
 	out_dir=${gen_dir}_rtab_${downsampling}
