@@ -1,60 +1,44 @@
 #!/bin/bash
-kpfeat="gftt_brief_fix"
-downsampling=1
-path="/imatge/icaminal/datasets/kitti/generated"
-out_dir="/imatge/icaminal/results/rtabmap"
-#out_file="$out_dir/ate_kitti_${downsampling}_infrared_${kpfeat}.csv" #infrared
-out_file="$out_dir/ate_kitti_${downsampling}_infrared_scaled_${kpfeat}.csv" #SCALED infrared
-#out_file="$out_dir/ate_kitti_${downsampling}_scaled_${kpfeat}.csv" #SCALED
-#out_file="$out_dir/ate_kitti_${downsampling}_${kpfeat}.csv"
-seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
-#inlier_dist_a=("0.020" "0.155" "0.025" "0.035" "0.030" "0.020" "0.120" "0.015" "0.045" "0.095" "0.015") #SCALED gftt/brief
-#inlier_dist_a=("0.4" "3.2" "0.6" "0.7" "0.7" "0.5" "6.0" "0.3" "1.3" "1.9" "0.4") #gftt/brief
-#inlier_dist_a=("0.020" "0.090" "0.030" "0.015" "0.050" "0.020" "0.070" "0.015" "0.030" "0.060" "0.020") #SCALED gftt/brief downsampling2
-#inlier_dist_a=("0.4" "1.6" "0.5" "0.3" "1.2" "0.4" "1.3" "0.3" "0.6" "1.0" "0.4") #gftt/brief downsampling2
-inlier_dist_a=("0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1" "0.1") #FIX  SCALED
-#inlier_dist_a=("2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2") #FIX
 
-#seq_a=("07") 
-#inlier_dist_a=("0.5") #gftt/brief
+#PARAMETERS
+out_dir=$1
+if [ ! -d "$out_dir" ]; then echo "ERROR: Invalid experiments output directory: $out_dir"; exit -1; fi
+group=`basename $out_dir`
+res_dir="$HOME/important/phd/metrics/rtab/kitti/$group"
+plots_dir="$res_dir/plots_ate_rtab_kitti_$group"
 
-dot_a=("f2m" )
+#RESET RESULTS
+rm -rf $res_dir/*
+mkdir -p $plots_dir/
 
-rm -f $out_file
-mkdir -p $out_dir
+#ITERATE SEQUENCES
+find $out_dir -maxdepth 1 -type d -print0 | #list seq dirs
+while IFS= read -r -d '' line; do 
+    seq=`basename "$line"`
+	seq_dir=$out_dir/$seq
+	
+	echo -e "\n\n""Evaluating ate sequence: $seq_dir"
 
-for ((i=0;i<${#seq_a[@]};++i)); do
-	#seq_dir=$path/${seq_a[i]}_rtab_${downsampling}_infrared #infrared
-	seq_dir=$path/${seq_a[i]}_rtab_${downsampling}_infrared_scaled #SCALED infrared
-	#seq_dir=$path/${seq_a[i]}_rtab_${downsampling}_scaled #SCALED
-	#seq_dir=$path/${seq_a[i]}_rtab_${downsampling}
-	cd $seq_dir
-	#rm -f ./*plot*
-
-    echo -e "\n\n Evaluating ate sequence: $seq_dir"
-
-	for ((j=0;j<${#dot_a[@]};++j)); do
-		#opt_scale=""
-		opt_scale="--scale 20" #SCALED
-		#plot="plot.${dot_a[j]}"
-		plot="plot.${dot_a[j]}.scaled" #SCALED
-				
-		#in_name="${downsampling}.rtabmap.poses.${inlier_dist_a[i]}.${dot_a[j]}"
-		in_name="${downsampling}.rtabmap.poses.${inlier_dist_a[i]}.${dot_a[j]}.scaled" #SCALED
+	find $seq_dir -maxdepth 1 -type f -print0 | #list all files
+	while IFS= read -r -d '' in_file; do
 		
-		#Without loop closure		
-		printf "\n${seq_a[i]};" | tee -a $out_file		
-		printf "${dot_a[j]};" | tee -a $out_file
-		printf "${inlier_dist_a[i]};" | tee -a $out_file
-
-		python ~/workspace/metrics_eval/evaluate_ate.py --verbose $opt_scale /imatge/icaminal/datasets/kitti/poses/${seq_a[i]}_freiburg.txt ./${in_name} --plot $plot.${kpfeat}.png | tee -a $out_file
+		if [[ ! $in_file =~ poses_* ]]; then continue; fi; #Skip non-pose files
 		
-		#With loop closure
-		printf "\n${seq_a[i]};" | tee -a $out_file		
-		printf "${dot_a[j]}.od;" | tee -a $out_file
-		printf "${inlier_dist_a[i]};" | tee -a $out_file
-
-		python ~/workspace/metrics_eval/evaluate_ate.py --verbose $opt_scale /imatge/icaminal/datasets/kitti/poses/${seq_a[i]}_freiburg.txt ./${in_name}.od --plot $plot.${kpfeat}.od.png | tee -a $out_file
-
+		#Get properties
+		in_name=`basename $in_file`
+		props={in_name:6:-4} #remove head "poses_" and tail ".txt"
+		IFS='_'; read -r -a props_a <<< $props; unset IFS; #Parse into array
+		
+		#Get depth_scale
+		depth_scale=""; #default none
+		if [[ ${props_a[-1]} =~ scale-* ]]; then depth_scale="--scale ${props_a[-1]:6}"; fi; done; 
+	
+		#Evaluate and save results
+		plot_file="$plots_dir/plot_rtab_kitti_$props.png"
+		res_file="$res_dir/ate_rtab_kitti_$group.csv"
+		printf "${props};" | tee -a ${res_file}
+		python ~/workspace/phd/metrics/evaluate_ate.py --verbose $depth_scale $HOME/datasets/kitti/poses/${seq}_freiburg.txt ${in_file} --plot ${plot_file} | tee -a ${res_file}
+		printf "\n" | tee -a ${res_file};
+		
 	done
 done
