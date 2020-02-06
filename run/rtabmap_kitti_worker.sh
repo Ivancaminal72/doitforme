@@ -31,7 +31,7 @@ main(){
 	rate=2 #(1 Hz) Detection rate. RTAB-Map will filter input images to satisfy this rate.
 
 	#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula" (current dependencies installed with puppet)
-	cd $HOME/workspace/PHD/rtabmap/rgbd-dataset_rtab-map/build
+	cd $HOME/workspace/phd/rtabmap/rgbd-dataset_rtab-map/build
 	
 	run 750 #With loop closure
 	run -1 #Without loop closure
