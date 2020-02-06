@@ -42,7 +42,7 @@ run(){
 	for ((i=0;i<${#seq_a[@]};++i)); do
 		gen_dir=$data_dir/${seq_a[i]}
 		out_dir=$outputs/${seq_a[i]}_${downsampling}
-		if [[ $1 > 0 ]]; then out_dir+="_LC"; fi;
+		if (( $1 <= 0 )); then out_dir+="_LC"; fi;
 		logs_dir=$out_dir/logs
 		calib=$data_dir/${seq_a[i]}/calib_${downsampling}.000000.txt
 		times_dir="$HOME/datasets/kitti/sequences/${seq_a[i]}/times.txt"
@@ -54,10 +54,10 @@ run(){
 			inlierdist=${inlier_dist_a[i]}
 			while true
 			do
-				if [[ $1 > 0 ]]; then 
-					out_name=${group}_${seq_a[i]}_${downsampling}_${dot_a[j]}_${inlierdist}
-				else
+				if (( $1 <= 0 )); then 
 					out_name=${group}_${seq_a[i]}_${downsampling}_LC-${1}_${dot_a[j]}_${inlierdist}
+				else
+					out_name=${group}_${seq_a[i]}_${downsampling}_${dot_a[j]}_${inlierdist}
 				fi;
 				log_name=$out_name.txt
 				
