@@ -25,8 +25,6 @@ while IFS= read -r -d '' line; do
 	while IFS= read -r -d '' in_file; do
 		
 		if [[ ! $in_file =~ poses_* ]]; then continue; fi; #Skip non-pose files
-		
-        echo -e "\n""Experiment: $in_file"
         
 		#Get properties
 		in_name=`basename $in_file`
