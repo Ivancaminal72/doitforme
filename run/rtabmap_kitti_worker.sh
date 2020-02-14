@@ -1,4 +1,6 @@
 #!/bin/bash
+script_path=$0
+
 main(){
 	#MULTIPLE seq execution
 	seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
@@ -16,7 +18,7 @@ main(){
 	outputs="$HOME/outputs/phd/kitti/rtab/$group"
 	downsampling=1
 	max_inlierdist=6
-	depth_scale=1.0
+	depth_scale=1
 	kps=6
 	features=6
 	gftt_dist=6 #(2 for downsampling=2) GFTT.MinDistance/dw^2
@@ -32,7 +34,9 @@ main(){
 
 	#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula" (current dependencies installed with puppet)
 	cd $HOME/workspace/phd/rtabmap/rgbd-dataset_rtab-map/build
-	
+	#RESET OUTPUT
+	rm -rf $outputs/*
+	#RUN
 	run 750 #With loop closure
 	run -1 #Without loop closure
 	
@@ -41,25 +45,28 @@ main(){
 run(){
 	for ((i=0;i<${#seq_a[@]};++i)); do
 		gen_dir=$data_dir/${seq_a[i]}
-		out_dir=$outputs/${seq_a[i]}_${downsampling}
-		if (( $1 > 0 )); then out_dir+="_LC"; fi;
+		out_dir=$outputs/${seq_a[i]}
 		logs_dir=$out_dir/logs
-		calib=$data_dir/${seq_a[i]}/calib_${downsampling}.000000.txt
-		times_dir="$HOME/datasets/kitti/sequences/${seq_a[i]}/times.txt"
-		rm -rf $out_dir/*
 		mkdir -p $logs_dir/
+		calib=$gen_dir/calib_${downsampling}.000000.txt
+		times_dir="$HOME/datasets/kitti/sequences/${seq_a[i]}/times.txt"
 	    echo -e "\n\n""Running sequence: $gen_dir"
 
 		for ((j=0;j<${#dot_a[@]};++j)); do
 			inlierdist=${inlier_dist_a[i]}
 			while true
 			do
-				if (( $1 > 0 )); then 
-					out_name=${group}_${seq_a[i]}_${downsampling}_LC-${1}_${dot_a[j]}_${inlierdist}
+				#out_name=$out_name_scale20
+				if [[ ${1} == -1 ]]; then
+					out_name=${group}_s${seq_a[i]}_d${downsampling}_i${inlierdist}_${dot_a[j]}
 				else
-					out_name=${group}_${seq_a[i]}_${downsampling}_${dot_a[j]}_${inlierdist}
-				fi;
-				log_name=$out_name.txt
+					out_name=${group}_s${seq_a[i]}_d${downsampling}_lc${1}_i${inlierdist}_${dot_a[j]}
+				fi
+				find $out_dir -name "*$out_name*" -type f -delete
+				log_path=$logs_dir/$out_name.txt
+				echo -e "$PATH \n\n\n" > $log_path
+				cat $script_path >> $log_path
+				echo -e "\n\n\n" >> $log_path
 				
 				echo -e "\n""Trying inlier distance --> $inlierdist"
 				echo -e "\n""${out_name}"
@@ -72,7 +79,7 @@ run(){
 				--calibfile $calib \
 				--poses ${dot_a[j]} \
 				--scale ${depth_scale} \
-				--times $times_dir \
+				--times ${times_dir} \
 				--Rtabmap/PublishRAMUsage true \
 				--Rtabmap/DetectionRate $rate \
 				--Rtabmap/CreateIntermediateNodes true \
@@ -90,7 +97,7 @@ run(){
 				--Vis/EstimationType $vis_estimation \
 				--Vis/InlierDistance $inlierdist \
 				$gen_dir \
-				> $logs_dir/$log_name \
+				>> $log_path  2>&1 \
 
 				#Loop closure other-possible-params:
 					#--Mem/STMSize 30 \ #def. 10
@@ -110,7 +117,7 @@ run(){
 					inlierdist=$(echo "$inlierdist 0.1" | awk '{printf "%.1f", $1+$2}') #Increment Inlier Distance
 					break #COMMENT FOR TUNNING #######------------#############
 					rm -f $out_dir/*$out_name*
-					rm -f $logs_dir/$log_name
+					rm -f $log_path
 
 				elif [[ $(echo "$inlierdist $max_inlierdist" | awk '{printf ($1>$2)}') -eq 1 ]] #Stop tunning (exceeds max)
 				then 
