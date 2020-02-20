@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e 
-cd ~/datasets
+cd ~/datasets && rm -rf ./kitti/ && mkdir kitti && cd kitti
 links=(
 "https://s3.eu-central-1.amazonaws.com/avg-kitti/devkit_odometry.zip"
 "https://s3.eu-central-1.amazonaws.com/avg-kitti/data_odometry_poses.zip"
