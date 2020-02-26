@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #PARAMETERS
-version=0.17.1-0
+#version=0.17.1-0
+version=0.19.3-2
 project=rtabmap-release
 #distro=kinetic
 distro=melodic
