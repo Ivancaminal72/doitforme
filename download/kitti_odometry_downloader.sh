@@ -1,4 +1,5 @@
 #!/bin/bash
+#Execution time ~12h
 set -e
 
 if [[ $1 == --h* ]] || [[ $1 == "" ]]; then
