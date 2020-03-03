@@ -4,18 +4,18 @@ script_path=$0
 main(){
 	#MULTIPLE seq execution
 	seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
-	#inlier_dist_a=("0.4" "3.2" "0.6" "0.7" "0.7" "0.5" "6.0" "0.3" "1.3" "1.9" "0.4") #gftt/brief
-	#inlier_dist_a=("0.4" "1.6" "0.5" "0.3" "1.2" "0.4" "1.3" "0.3" "0.6" "1.0" "0.4") #gftt/brief downsampling2
+	# inlier_dist_a=("0.4" "3.2" "0.6" "0.7" "0.7" "0.5" "6.0" "0.3" "1.3" "1.9" "0.4") #gftt/brief
+	# inlier_dist_a=("0.4" "1.6" "0.5" "0.3" "1.2" "0.4" "1.3" "0.3" "0.6" "1.0" "0.4") #gftt/brief downsampling2
 	inlier_dist_a=("2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2") #FIX
 
 	#SINGLE seq execution (override)
-	#inlier_dist_a=2
-	#seq_a=("07")
+	# inlier_dist_a=2
+	# seq_a=("00")
 
 	#PARAMETERS
 	group="unscaled" #scaled-n / modality
 	data_dir="$HOME/datasets/kitti/generated"
-	outputs="$HOME/outputs/phd/kitti/rtab/$group"
+	outputs="$HOME/outputs/phd/kitti/r017k/$group"
 	downsampling=1
 	max_inlierdist=6
 	depth_scale=1
@@ -34,11 +34,10 @@ main(){
 
 	#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula" (current dependencies installed with puppet)
 	cd $HOME/workspace/phd/rtabmap/rgbd-dataset_rtab-map/build
-	#RESET OUTPUT
-	rm -rf $outputs/*
-	#RUN
+	
+	reset_outputs #Delete old runs
 	run 750 #With loop closure
-	run -1 #Without loop closure
+	# run -1 #Without loop closure
 	
 }
 
@@ -72,12 +71,11 @@ run(){
 				echo -e "\n""${out_name}"
 
 				srun -p gpi.develop --time=0:30:00 --mem=8GB -c4 ./rgbd_dataset \
-				--output $out_dir \
+				--outdir $out_dir \
 				--outname $out_name \
-				--imagename "visible"\
+				--colorname "rgb"\
 				--depthname "depth"\
-				--calibfile $calib \
-				--poses ${dot_a[j]} \
+				--calib $calib \
 				--scale ${depth_scale} \
 				--times ${times_dir} \
 				--Rtabmap/PublishRAMUsage true \
@@ -129,6 +127,12 @@ run(){
 				fi			
 			done
 		done
+	done
+}
+
+reset_outputs(){
+	for ((i=0;i<${#seq_a[@]};++i)); do
+		rm -rf $outputs/${seq_a[i]}/
 	done
 }
 
