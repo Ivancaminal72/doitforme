@@ -33,7 +33,7 @@ main(){
 	rate=2 #(1 Hz) Detection rate. RTAB-Map will filter input images to satisfy this rate.
 
 	#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula" (current dependencies installed with puppet)
-	cd $HOME/workspace/phd/rtabmap/rgbd-dataset_rtab-map/build
+	cd $HOME/workspace/phd/rtabmap/png_dataset_0.17.1-0/build
 	
 	reset_outputs #Delete old runs
 	run 750 #With loop closure
@@ -70,7 +70,7 @@ run(){
 				echo -e "\n""Trying inlier distance --> $inlierdist"
 				echo -e "\n""${out_name}"
 
-				srun -p gpi.develop --time=0:30:00 --mem=8GB -c4 ./rgbd_dataset \
+				srun -p gpi.develop --time=0:30:00 --mem=8GB -c4 ./png_dataset \
 				--outdir $out_dir \
 				--outname $out_name \
 				--colorname "rgb"\
