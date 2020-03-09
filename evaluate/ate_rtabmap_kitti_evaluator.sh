@@ -2,7 +2,7 @@
 
 #PARAMETERS
 if [[ $1 == --h* ]] || [[ $1 == "" ]]; then 
-    echo -e "Usage: $0 /path/to/experiments/output/directory"; exit; fi;
+    echo -e "Usage: $(basename $0) /path/to/experiments/output/directory"; exit; fi;
 out_dir=${1%/}
 if [ ! -d "$out_dir" ]; then echo "ERROR: Invalid experiments output directory: $out_dir"; exit 1; fi
 IFS='/'; read -r -a ordir <<< $out_dir; unset IFS; #Parse dirnames "~/outputs/phd/kitti/rtab/unscaled"

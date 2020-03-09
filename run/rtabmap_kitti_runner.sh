@@ -1,5 +1,12 @@
 #!/bin/bash
+
+#PARAMETERS
+if [[ "$#" -ne 3 ]] || [[ $1 == --h* ]]; then
+    echo -e "Usage: $(basename $0) rtabmapVersion groupExperiments rtabmapRelease"; exit; fi;
 script_path=$0
+rtab_version=$1 #r017k / r017m / r019m
+group=$2 #scaled-n / modality
+rtab_release=$3
 
 main(){
 	#MULTIPLE seq execution
@@ -13,9 +20,8 @@ main(){
 	# seq_a=("00")
 
 	#PARAMETERS
-	group="unscaled" #scaled-n / modality
 	data_dir="$HOME/datasets/kitti/generated"
-	outputs="$HOME/outputs/phd/kitti/r017k/$group"
+	outputs="$HOME/outputs/phd/kitti/$rtab_version/$group"
 	downsampling=1
 	max_inlierdist=6
 	depth_scale=1
@@ -33,7 +39,7 @@ main(){
 	rate=2 #(1 Hz) Detection rate. RTAB-Map will filter input images to satisfy this rate.
 
 	#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula" (current dependencies installed with puppet)
-	cd $HOME/workspace/phd/rtabmap/png_dataset_0.17.1-0/build
+	cd $HOME/workspace/phd/rtabmap/png_dataset_${rtab_release}/build
 	
 	reset_outputs #Delete old runs
 	run 750 #With loop closure

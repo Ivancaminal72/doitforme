@@ -24,5 +24,5 @@ else
 fi
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/local/${project}_${distro}_${version} -DWITH_FREENECT=OFF -DWITH_FREENECT2=OFF -DWITH_QT=OFF -DBUILD_TOOLS=OFF -DBUILD_EXAMPLES=OFF | tee -a ./cmake_stdout.log
-srun -p gpi.develop --exclude=gpid04 --mem 20G -c12 make -j12 
+srun -p gpi.develop --mem 20G -c12 make -j12 
 srun -p gpi.develop --mem 20G -c12 make -j12 install
