@@ -10,14 +10,14 @@ rtab_release=$3
 
 main(){
 	#MULTIPLE seq execution
-	seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
+	# seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
 	# inlier_dist_a=("0.4" "3.2" "0.6" "0.7" "0.7" "0.5" "6.0" "0.3" "1.3" "1.9" "0.4") #gftt/brief
 	# inlier_dist_a=("0.4" "1.6" "0.5" "0.3" "1.2" "0.4" "1.3" "0.3" "0.6" "1.0" "0.4") #gftt/brief downsampling2
-	inlier_dist_a=("2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2") #FIX
+	# inlier_dist_a=("2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2") #FIX
 
 	#SINGLE seq execution (override)
-	# inlier_dist_a=2
-	# seq_a=("00")
+	inlier_dist_a=2
+	seq_a=("00")
 
 	#PARAMETERS
 	data_dir="$HOME/datasets/kitti/generated"
@@ -40,11 +40,11 @@ main(){
 
 	#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula" (current dependencies installed with puppet)
 	cd $HOME/workspace/phd/rtabmap/png_dataset_${rtab_release}/build
-	
+
 	reset_outputs #Delete old runs
 	run 750 #With loop closure
 	# run -1 #Without loop closure
-	
+
 }
 
 run(){
@@ -72,7 +72,7 @@ run(){
 				echo -e "$PATH \n\n\n" > $log_path
 				cat $script_path >> $log_path
 				echo -e "\n\n\n" >> $log_path
-				
+
 				echo -e "\n""Trying inlier distance --> $inlierdist"
 				echo -e "\n""${out_name}"
 
@@ -124,13 +124,13 @@ run(){
 					rm -f $log_path
 
 				elif [[ $(echo "$inlierdist $max_inlierdist" | awk '{printf ($1>$2)}') -eq 1 ]] #Stop tunning (exceeds max)
-				then 
+				then
 					rm -f $out_dir/*$out_name*
 					break
 
 				else
 					continue
-				fi			
+				fi
 			done
 		done
 	done

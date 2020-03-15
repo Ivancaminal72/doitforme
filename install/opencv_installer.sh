@@ -1,17 +1,21 @@
 #!/bin/bash
+
+#PARAMETERS
 version=3.2.0
 project=opencv
-cd $HOME/workspace/phd/opencv/
+mkdir -p $HOME/workspace/phd/opencv/ && cd $HOME/workspace/phd/opencv/
 
-wget https://github.com/opencv/opencv/archive/${version}.tar.gz
-tar -xzvf ${version}.tar.gz
-rm -f ${version}.tar.gz
-wget https://github.com/opencv/opencv_contrib/archive/${version}.tar.gz
-tar -xzvf ${version}.tar.gz
-rm -f ${version}.tar.gz
-mv opencv-3.2.0/ opencv_${version}/
-mv opencv_contrib-3.2.0/ ${project}-contrib_${version}/
+# #Downlaod
+# wget https://github.com/opencv/opencv/archive/${version}.tar.gz
+# tar -xzvf ${version}.tar.gz
+# rm -f ${version}.tar.gz
+# wget https://github.com/opencv/opencv_contrib/archive/${version}.tar.gz
+# tar -xzvf ${version}.tar.gz
+# rm -f ${version}.tar.gz
+# mv opencv-${version}/ opencv_${version}/
+# mv opencv_contrib-${version}/ ${project}-contrib_${version}/
 
+#Build (remote host?)
 cd opencv_${version}/
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/local/${project}_${version} \
@@ -49,6 +53,6 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/local/${project
     -DBUILD_opencv_ximgproc=OFF \
     -DBUILD_opencv_xobjdetect=OFF \
     -DBUILD_opencv_xphoto=OFF
-    
+
 srun -p gpi.develop --mem 20G -c12 make -j12
 srun -p gpi.develop --mem 20G -c12 make -j12 install
