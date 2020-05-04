@@ -17,6 +17,7 @@ usage()
     echo -e ""
     echo -e "Rtabmap"
     echo -e "\t"'--odom=Val     Odometry strategy idx ("f2m" "f2f" "Fovis" "Viso2" "DVO-SLAM" "ORB_SLAM2" "OKVIS" "LOAM" "MSCKF_VIO" "VINS-Fusion")'
+    echo -e ""
     echo -e "\t""--help         Display this help and exit"
 }
 
