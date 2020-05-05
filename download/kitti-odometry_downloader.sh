@@ -3,7 +3,7 @@
 set -e
 
 if [[ $1 == --h* ]] || [[ $1 == "" ]]; then
-	echo -e "Usage: $0 /path/to/datasets (creates kitti dir)"; exit; fi;
+	echo -e "Usage: $0 {datasets_directory} (creates kitti folder)"; exit; fi;
 if [[ ! -d $1 ]]; then echo "Invalid $1"; exit 1; fi;
 if [[ ! -w $1 ]]; then echo "User doesn't have write persmision to $1"; exit 1; fi;
 dataset_dir="${1%/}/kitti"

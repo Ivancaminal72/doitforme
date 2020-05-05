@@ -3,7 +3,7 @@
 set -e
 
 if [[ $1 == --h* ]] || [[ $1 == "" ]]; then
-	echo -e "Usage: $0 /path/to/datasets (creates dir)"; exit; fi;
+	echo -e "Usage: $0 {datasets_directory} (creates a2d2 folder)"; exit; fi;
 if [[ ! -d $1 ]]; then echo "ERROR: Invalid directory $1"; exit 1; fi;
 if [[ ! -w $1 ]]; then echo "ERROR: User doesn't have write persmision at $1"; exit 1; fi;
 dataset_dir="${1%/}/a2d2"
