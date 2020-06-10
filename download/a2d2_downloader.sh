@@ -17,14 +17,15 @@ if [[ -d $dataset_dir ]]; then
 fi
 
 mkdir -p $dataset_dir/logs_download && cd $dataset_dir
+hostName="https://aev-autonomous-driving-dataset.s3.eu-central-1.amazonaws.com"
 
 #Download info
-wget https://aev-autonomous-driving-dataset.s3.eu-central-1.amazonaws.com/tutorial.ipynb
-wget https://aev-autonomous-driving-dataset.s3.eu-central-1.amazonaws.com/cams_lidars.json
-wget https://aev-autonomous-driving-dataset.s3.eu-central-1.amazonaws.com/README.txt
-wget https://aev-autonomous-driving-dataset.s3.eu-central-1.amazonaws.com/README-SemSeg.txt
-wget https://aev-autonomous-driving-dataset.s3.eu-central-1.amazonaws.com/README-3DBoxes.txt
-wget https://aev-autonomous-driving-dataset.s3.eu-central-1.amazonaws.com/README-SensorFusion.txt
+wget $hostName/tutorial.ipynb -O ./tutorial.ipynb
+wget $hostName/cams_lidars.json -O ./cams_lidars.json
+wget $hostName/README.txt -O ./README.txt
+wget $hostName/README-SemSeg.txt -O ./README-SemSeg.txt
+wget $hostName/README-3DBoxes.txt -O ./README-3DBoxes.txt
+wget $hostName/README-SensorFusion.txt -O ./README-SensorFusion.txt
 
 #Download data
 declare -a files
