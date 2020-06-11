@@ -2,23 +2,23 @@
 
 usage()
 {
-    echo -e "Usage: ./$(basename $0) {group} {release} [--sub=Val] [--ate[=Val]] [--rec] [--out=Val] [--odom=Val]"
-    echo -e "Script to automate running the png_dataset (rtabmap tool) for different kitti sequences"
-    echo -e ""
-    echo -e "Mandatory"
-    echo -e "\t""group          Name of the experiments group (scaled-n / modality)"
-    echo -e "\t""release        Release number of rtabmap to use (png_dataset_{release})"
-    echo -e ""
-    echo -e "Optional"
-    echo -e "\t""--sub=Val      Make group become subgroup within a new group called as this parameter value"
-    echo -e "\t""--ate[=Val]    Execute ATE evalutation script after running. In case of --sub argument will do individual subgroup mode with [Val] as the parent foldername (defalut: tmp)"
-    echo -e "\t""--rec          Preserve rtabmap .db file to allow for exporting its pointcloud/mesh reconstruction"
-    echo -e "\t""--out=Val      Custom output folder name (like: r017k / r017m / r019m)"
-    echo -e ""
-    echo -e "Rtabmap"
-    echo -e "\t"'--odom=Val     Odometry strategy idx ("f2m" "f2f" "Fovis" "Viso2" "DVO-SLAM" "ORB_SLAM2" "OKVIS" "LOAM" "MSCKF_VIO" "VINS-Fusion")'
-    echo -e ""
-    echo -e "\t""--help         Display this help and exit"
+    echo "Usage: ./$(basename $0) {group} {release} [--sub=Val] [--ate[=Val]] [--rec] [--out=Val] [--odom=Val]"
+    echo "Script to automate running the png_dataset (rtabmap tool) for different kitti sequences"
+    echo ""
+    echo "Mandatory"
+    echo "       group          Name of the experiments group (scaled-n / modality)"
+    echo "       release        Release number of rtabmap to use (png_dataset_{release})"
+    echo ""
+    echo "Optional"
+    echo "       --sub=Val      Make group become subgroup within a new group called as this parameter value"
+    echo "       --ate[=Val]    Execute ATE evalutation script after running. In case of --sub argument will do individual subgroup mode with [Val] as the parent foldername (defalut: tmp)"
+    echo "       --rec          Preserve rtabmap .db file to allow for exporting its pointcloud/mesh reconstruction"
+    echo "       --out=Val      Custom output folder name (like: r017k / r017m / r019m)"
+    echo ""
+    echo "Rtabmap"
+    echo '       --odom=Val     Odometry strategy idx ("f2m" "f2f" "Fovis" "Viso2" "DVO-SLAM" "ORB_SLAM2" "OKVIS" "LOAM" "MSCKF_VIO" "VINS-Fusion")'
+    echo ""
+    echo "       --help         Display this help and exit"
 }
 
 #Arg parser
