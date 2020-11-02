@@ -1,3 +1,8 @@
+# Set local environment (add to ~/.bashrc)
+# if ! [[ "$TERM" =~ "screen".* ]]; then
+#     source ~/workspace/doitforme/install/.set_environment.sh
+# fi
+
 setEV() {
     if [[ -d $2 ]]; then
         export $1="$2:${!1}"
