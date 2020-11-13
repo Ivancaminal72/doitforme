@@ -3,23 +3,21 @@
 #PARAMETERS
 version=3.2.0
 project=opencv
-mkdir -p $HOME/workspace/phd/opencv/ && cd $HOME/workspace/phd/opencv/
+mkdir -p $HOME/workspace/phd/${project}/ && cd $HOME/workspace/phd/${project}/
 
-# #Downlaod
-# wget https://github.com/opencv/opencv/archive/${version}.tar.gz
-# tar -xzvf ${version}.tar.gz
-# rm -f ${version}.tar.gz
-# wget https://github.com/opencv/opencv_contrib/archive/${version}.tar.gz
-# tar -xzvf ${version}.tar.gz
-# rm -f ${version}.tar.gz
-# mv opencv-${version}/ opencv_${version}/
-# mv opencv_contrib-${version}/ ${project}-contrib_${version}/
+#Downlaod
+wget https://github.com/opencv/opencv/archive/${version}.tar.gz
+tar -xzvf ${version}.tar.gz
+rm -f ${version}.tar.gz
+wget https://github.com/opencv/opencv_contrib/archive/${version}.tar.gz
+tar -xzvf ${version}.tar.gz
+rm -f ${version}.tar.gz
 
 #Build (remote host?)
-cd opencv_${version}/
+cd opencv-${version}/
 mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/local/${project}_${version} \
-    -DOPENCV_EXTRA_MODULES_PATH=$HOME/workspace/phd/opencv/${project}-contrib_${version}/modules/ \
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/local/${project}-${version} \
+    -DOPENCV_EXTRA_MODULES_PATH=$HOME/workspace/phd/opencv/${project}_contrib-${version}/modules/ \
     -DENABLE_PRECOMPILED_HEADERS=OFF \
     -DBUILD_opencv_aruco=OFF \
     -DBUILD_opencv_bgsegm=OFF \
