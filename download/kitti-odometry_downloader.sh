@@ -30,8 +30,8 @@ mv devkit_odometry/devkit/ .
 mv data_odometry_poses/dataset/poses/ .
 rsync -av --remove-source-files ./data_odometry_velodyne/dataset/sequences/ ./data_odometry_color/dataset/sequences/ > ./logs_download/rg_velodyne-color.txt 2>&1 &
 rsync -av --remove-source-files ./data_odometry_gray/dataset/sequences/ ./data_odometry_color/dataset/sequences/ > ./logs_download/rg_gray-color.txt 2>&1 &
-rsync -av --remove-source-files ./data_odometry_calib/dataset/sequences/ ./data_odometry_color/dataset/sequences/ > ./logs_download/rg_calib-color.txt 2>&1 &
 wait
+rsync -av --remove-source-files ./data_odometry_calib/dataset/sequences/ ./data_odometry_color/dataset/sequences/ > ./logs_download/rg_calib-color.txt 2>&1
 mv data_odometry_color/dataset/sequences/ .
 rm -rf devkit_odometry/
 rm -rf data_odometry_poses/
@@ -40,6 +40,5 @@ rm -rf data_odometry_gray/
 rm -rf data_odometry_color/
 rm -rf data_odometry_velodyne/
 echo "OK!"
-
 
 
