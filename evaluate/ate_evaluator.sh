@@ -88,7 +88,7 @@ while IFS= read -r -d '' line; do
         fi
         
         #Time of the execution
-        tail -n 60 "$logs_dir/$log_name" | grep "Total time=" | sed 's/Total time=//g'| { awk -F. '{printf $1}'; printf ";"; } | tee -a ${res_file}
+        # tail -n 60 "$logs_dir/$log_name" | grep "Total time=" | sed 's/Total time=//g'| { awk -F. '{printf $1}'; printf ";"; } | tee -a ${res_file}
 		
 		#Get depth_scale"
 		depth_scale=""; #default none
