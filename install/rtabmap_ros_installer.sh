@@ -24,5 +24,6 @@ catkin_make -j$(nproc)
 catkin_make -j$(nproc) install
 
 #Test
-# roslaunch rtabmap_ros rtabmap.launch rviz:=true rtabmapviz:=false rgb_topic:=/data_throttled_image depth_topic:=/data_throttled_image_depth camera_info_topic:=/data_throttled_camera_info compressed:=true frame_id:=openni_camera_link database_path:=/dev/null
+# roslaunch rtabmap_ros rtabmap.launch rviz:=true rtabmapviz:=false rgb_topic:=/data_throttled_image depth_topic:=/data_throttled_image_depth camera_info_topic:=/data_throttled_camera_info compressed:=true frame_id:=openni_camera_link database_path:=/tmp/rtabmap.db
 # roslaunch rtabmap_ros rgbd_mapping.launch rviz:=true rtabmapviz:=false rgb_topic:=/data_throttled_image depth_registered_topic:=/data_throttled_image_depth camera_info_topic:=/data_throttled_camera_info compressed:=true frame_id:=openni_camera_link
+# roslaunch rtabmap_ros rgbd_mapping.launch rviz:=true rtabmapviz:=false rgb_topic:=/cam02 depth_registered_topic:=/cam02_depth camera_info_topic:=/camera_info frame_id:=lidar database_path:=/dev/null approx_sync:=false
