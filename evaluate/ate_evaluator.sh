@@ -58,7 +58,7 @@ plots_dir="$res_dir/plots"
 #RESET RESULTS
 rm -rf $res_dir/*
 mkdir -p $plots_dir/
-echo "Sequence;Experiment parameters;Time;GT;Estimated;Compared;RMSE;MEAN;MEDIAN;STD;MIN;MAX" >> ${res_file}
+echo "Sequence;Experiment parameters;GT;Estimated;Compared;RMSE;MEAN;MEDIAN;STD;MIN;MAX" >> ${res_file}
 
 #ITERATE SEQUENCES
 find $out_dir -maxdepth $dir_depth -type d -print0 |
@@ -90,13 +90,13 @@ while IFS= read -r -d '' line; do
         #Time of the execution
         # tail -n 60 "$logs_dir/$log_name" | grep "Total time=" | sed 's/Total time=//g'| { awk -F. '{printf $1}'; printf ";"; } | tee -a ${res_file}
 		
-		#Get depth_scale"
-		depth_scale=""; #default none
-		if [[ ${props_a[-1]} =~ scale* ]]; then depth_scale="--scale ${props_a[-1]:5}"; fi;
+		#Get depth_scale
+		# depth_scale=""; #default none
+		# if [[ ${props_a[-1]} =~ scale* ]]; then depth_scale="--scale ${props_a[-1]:5}"; fi;
         
 		#Evaluate and save results
 		plot_file="$plots_dir/plot_${system}_${dataset}_$props.png"
-        python ~/workspace/phd/metrics/evaluate_ate.py $depth_scale $HOME/datasets/${dataset}/poses/${seq}_freiburg.txt ${in_file} --plot ${plot_file} | tee -a ${res_file}
+        python ~/workspace/phd/metrics/evaluate_ate.py --scale 1.8310546875 $HOME/datasets/${dataset}/poses/${seq}_freiburg.txt ${in_file} --plot ${plot_file} | tee -a ${res_file}
 		printf "\n" | tee -a ${res_file};
 	done
 done
