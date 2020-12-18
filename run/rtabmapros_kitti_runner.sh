@@ -23,6 +23,7 @@ usage()
 
 #Arg parser
 if [[ "$#" -gt 7 ]] || [[ "$#" -lt 2 ]] || [[ $1 == --help ]]; then usage; exit; fi
+args_a=$@
 script_path=$0
 group=$1
 system=$2
@@ -31,6 +32,7 @@ evaluate_ate=false
 ate_parent="tmp"
 delete_db=true
 exp_dir=$HOME
+tmux=true
 odom_idx=0 #(0)Odometry_stragegy {"0=Frame-to-Map (F2M) 1=Frame-to-Frame (F2F) 2=Fovis 3=viso2 4=DVO-SLAM 5=ORB_SLAM2 6=OKVIS 7=LOAM 8=MSCKF_VIO 9=VINS-Fusion"}
 while [ "$3" != "" ]; do
     ARG=`echo $3 | awk -F= '{print $1}'`
@@ -62,13 +64,19 @@ done
 main(){
 	#MULTIPLE seq execution
 	# seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
+    # inlier_dist_a=("2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2") #FIX
     # inlier_dist_a=("0.4" "3.2" "0.6" "0.7" "0.7" "0.5" "6.0" "0.3" "1.3" "1.9" "0.4") #gftt/brief
 	# inlier_dist_a=("0.4" "1.6" "0.5" "0.3" "1.2" "0.4" "1.3" "0.3" "0.6" "1.0" "0.4") #gftt/brief downsampling2
-	# inlier_dist_a=("2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2") #FIX
+    
+    
+    #CUSTOMULTIPLE seq execution
+	seq_a=("02" "05" "06")
+    inlier_dist_a=("2" "2" "2") #FIX
+	
 
 	#SINGLE seq execution (override)
-	seq_a=("04")
-    inlier_dist_a=2
+	# seq_a=("07")
+    # inlier_dist_a=(2)
 
 	#PARAMETERS
     data_dir="$HOME/datasets/kitti/sequences"
@@ -87,12 +95,18 @@ main(){
     # force3dof=false #Force 3 degrees-of-freedom transform (3Dof: x,y and yaw). Parameters z, roll and pitch will be set to 0."
 
 	#source ~/workspace/install/modules_rtabmap.sh #Not needed in "calcula.tsc.upc.edu" (current dependencies installed with puppet)
+    source $HOME/.bashrc_custom
     roscd && cd ..
+    
     rosmaster --core &
-
-	reset_outputs #Delete old runs
+    PID_roscore=$!
+    
+	rm -rf /tmp/roslogs/* #Delete old logs
+    reset_outputs #Delete old runs
 	run 750 #With loop closure
-	run -1 #Without loop closure
+	# run -1 #Without loop closure
+    
+    kill -s 9 $PID_roscore
     
     #Delete rtabmap db
     if $delete_db; then find $outputs -name *.db -type f -delete & fi
@@ -128,57 +142,76 @@ run(){
 				out_name=${group}_s${seq_a[i]}_lc${1}_i${inlierdist}_${odom_a[$odom_idx]}
 			fi
 			find $out_dir -name "*$out_name*" -type f -delete
-			log_path=$logs_dir/$out_name.txt
-			echo -e "$PATH \n\n\n" > $log_path
+            
+            rtabmap_args="
+            --delete_db_on_start
+            --Rtabmap/PublishRAMUsage true
+            --Rtabmap/DetectionRate 10
+            --Rtabmap/CreateIntermediateNodes true
+            --RGBD/LinearUpdate 0
+            --Reg/Strategy 0
+            --GFTT/QualityLevel 0.0005
+            --GFTT/MinDistance 6
+            --Odom/Strategy $odom_idx
+            --OdomF2M/MaxSize 3000
+            --Kp/MaxFeatures $1
+            --Kp/DetectorStrategy 6
+            --Vis/FeatureType 6
+            --Vis/CorType 0
+            --Vis/EstimationType 0
+            --Vis/InlierDistance $inlierdist
+            --Reg/Force3DoF false"
+            
+            # Logging
+            log_path=$logs_dir/$out_name.txt
+			echo -e "$PATH \n" > $log_path
+            printf "%s\n" "${args_a[@]}" >> $log_path
+            echo -e "" >> $log_path
+            echo -e $rtabmap_args | sed 's/\s\-\-/\n\-\-/g' >> $log_path
+            echo -e "\n\n\n" >> $log_path
 			cat $script_path >> $log_path
-			echo -e "\n\n\n" >> $log_path
 
 			echo -e "\n""Trying inlier distance --> $inlierdist"
 			echo -e "\n""${out_name}"
 
-            # roslaunch rtabmap_ros rgbd_mapping.launch \
-            # rtabmapviz:=false \
-            # rviz:=false \
-            # rviz_cfg:=/home/icaminal/workspace/ros_ddd/rviz/rtabmap_kitti.rviz \
-            # rgb_topic:=/cam02 \
-            # depth_registered_topic:=/cam02_depth \
-            # camera_info_topic:=/camera_info \
-            # frame_id:=lidar \
-            # database_path:=$outputs/rtabmap.db \
-            # approx_sync:=false \
-            # rtabmap_args:="
-            # --delete_db_on_start
-            # --Rtabmap/PublishRAMUsage true
-            # --Rtabmap/DetectionRate 10
-            # --Rtabmap/CreateIntermediateNodes true
-            # --RGBD/LinearUpdate 0
-            # --Reg/Strategy 0
-            # --GFTT/QualityLevel 0.0005
-            # --GFTT/MinDistance 6
-            # --Odom/Strategy $odom_idx
-            # --OdomF2M/MaxSize 3000
-            # --Kp/MaxFeatures $1
-            # --Kp/DetectorStrategy 6
-            # --Vis/FeatureType 6
-            # --Vis/CorType 0
-            # --Vis/EstimationType 0
-            # --Vis/InlierDistance 2
-            # --Reg/Force3DoF false"
-            # >> $log_path  2>&1 &
+            rtabmap_cmd=(roslaunch rtabmap_ros rgbd_mapping.launch \
+            rtabmapviz:=false \
+            rviz:=false \
+            rviz_cfg:=/home/icaminal/workspace/ros_ddd/rviz/rtabmap_kitti.rviz \
+            rgb_topic:=/cam02 \
+            depth_registered_topic:=/cam02_depth \
+            camera_info_topic:=/camera_info \
+            frame_id:=lidar \
+            database_path:=$outputs/rtabmap.db \
+            approx_sync:=false \
+            rtabmap_args:="$rtabmap_args")
             
             #Loop closure other-possible-params:
-				#--Mem/STMSize 30 \ #def. 10
-				#--RGBD/OptimizeMaxError 2.0 \
-				#--RGBD/NeighborLinkRefining true \
-				# --Grid/FromDepth true \
-				# --Grid/DepthDecimation 1 \
-				# --Grid/RangeMax 20 \
-				# --Grid/3D true \
+    		#--Mem/STMSize 30 \ #def. 10
+    		#--RGBD/OptimizeMaxError 2.0 \
+    		#--RGBD/NeighborLinkRefining true \
+    		# --Grid/FromDepth true \
+    		# --Grid/DepthDecimation 1 \
+    		# --Grid/RangeMax 20 \
+    		# --Grid/3D true \
             
-            # rosrun data_to_rosbag pcd_to_png 2 >> $logs_dir/pcd_to_png.txt  2>&1 &
-            # rosrun data_to_rosbag kitti_live_node /home/icaminal/datasets/kitti/sequences/${seq_a[i]}
-            # rosservice call /rtabmap/get_trajectory_data true true "$out_dir/$out_name"
-            kill -s 9 $(jobs -p)
+            if $tmux;
+            then pane_id_rtabmap=$(tmux split-window -P -F "#{pane_id}" "${rtabmap_cmd[@]}");
+            else "${rtabmap_cmd[@]} &"; fi
+                
+            sleep 7
+            inter_cmd=(rosrun data_to_rosbag pcd_to_png 2)
+            if $tmux;
+            then pane_id_rtabmap=$(tmux split-window -P -F "#{pane_id}" "${inter_cmd[@]}");
+            else "${rtabmap_cmd[@]} &"; fi
+            
+            sleep 3
+            rosrun data_to_rosbag kitti_live_node /home/icaminal/datasets/kitti/sequences/${seq_a[i]}
+            sleep 28
+            rosservice call /rtabmap/get_trajectory_data true true "$out_dir/poses_$out_name.txt"
+
+            rosnode kill -a
+            sleep 3
 
 			retVal=$?
 			if [[ $retVal -eq 0 ]]

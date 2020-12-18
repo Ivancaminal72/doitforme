@@ -61,14 +61,14 @@ done
 
 main(){
 	#MULTIPLE seq execution
-	# seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
+	seq_a=("00" "01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
 	# inlier_dist_a=("0.4" "3.2" "0.6" "0.7" "0.7" "0.5" "6.0" "0.3" "1.3" "1.9" "0.4") #gftt/brief
 	# inlier_dist_a=("0.4" "1.6" "0.5" "0.3" "1.2" "0.4" "1.3" "0.3" "0.6" "1.0" "0.4") #gftt/brief downsampling2
-	# inlier_dist_a=("2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2") #FIX
+	inlier_dist_a=("2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2" "2") #FIX
 
 	#SINGLE seq execution (override)
-	seq_a=("08")
-    inlier_dist_a=2
+	# seq_a=("08")
+    # inlier_dist_a=(2)
 
 	#PARAMETERS
 	data_dir="$HOME/datasets/kitti/generated"
