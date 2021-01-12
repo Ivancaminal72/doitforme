@@ -70,13 +70,13 @@ main(){
     
     
     #CUSTOMULTIPLE seq execution
-	seq_a=("02" "05" "06")
-    inlier_dist_a=("2" "2" "2") #FIX
+	# seq_a=("08" "03" "09" "04")
+    # inlier_dist_a=("2" "2" "2" "2") #FIX
 	
 
 	#SINGLE seq execution (override)
-	# seq_a=("07")
-    # inlier_dist_a=(2)
+	seq_a=("04")
+    inlier_dist_a=(2)
 
 	#PARAMETERS
     data_dir="$HOME/datasets/kitti/sequences"
@@ -100,6 +100,7 @@ main(){
     
     rosmaster --core &
     PID_roscore=$!
+    trap 'kill -s 9 $PID_roscore; exit 1' SIGINT SIGTERM
     
 	rm -rf /tmp/roslogs/* #Delete old logs
     reset_outputs #Delete old runs
@@ -202,18 +203,18 @@ run(){
             sleep 7
             inter_cmd=(rosrun data_to_rosbag pcd_to_png 2)
             if $tmux;
-            then pane_id_rtabmap=$(tmux split-window -P -F "#{pane_id}" "${inter_cmd[@]}");
+            then pane_id_inter=$(tmux split-window -P -F "#{pane_id}" "${inter_cmd[@]}");
             else "${rtabmap_cmd[@]} &"; fi
             
             sleep 3
             rosrun data_to_rosbag kitti_live_node /home/icaminal/datasets/kitti/sequences/${seq_a[i]}
-            sleep 28
+            sleep 29
             rosservice call /rtabmap/get_trajectory_data true true "$out_dir/poses_$out_name.txt"
-
+			retVal=$?
+            
             rosnode kill -a
             sleep 3
-
-			retVal=$?
+            
 			if [[ $retVal -eq 0 ]]
 			then
 				break
@@ -227,9 +228,9 @@ run(){
 			elif [[ $(echo "$inlierdist $max_inlierdist" | awk '{printf ($1>$2)}') -eq 1 ]] #Stop tunning (exceeds max)
 			then
 				rm -f $out_dir/*$out_name*
-				break 
-			fi
-            break
+				break
+            fi
+            # break #Comment to disable reexecution if error in evaluation output
 		done
 	done
 }
