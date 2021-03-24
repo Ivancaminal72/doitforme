@@ -4,6 +4,7 @@
 roscd && cd ../src
 git clone https://github.com/ethz-asl/minkindr.git
 #(optional) git checkout 5b9fe7f21b58510c0cd8c1ef1aef376f77001ffe
+#(optional) wstool init src
 cd ..
 cp src/minkindr/dependencies.rosinstall ~/workspace/ros_ddd/rosinstall_minkindr.rosinstall
 wstool merge -t src rosinstall_minkindr.rosinstall
