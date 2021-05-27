@@ -18,6 +18,9 @@ usage()
     echo "Rtabmap"
     echo '       --odom=Val     Odometry strategy idx (0=Frame-to-Map (F2M) 1=Frame-to-Frame (F2F) 2=Fovis 3=viso2 4=DVO-SLAM 5=ORB_SLAM2 6=OKVIS 7=LOAM 8=MSCKF_VIO 9=VINS-Fusion") (defalut: 0)'
     echo ""
+    echo "Rosbag"
+    echo '       --mult=Val     Multiplier to the real frequency (defalut: 0.2)'
+    echo ""
     echo "       --help         Display this help and exit"
 }
 
@@ -34,6 +37,7 @@ delete_db=true
 exp_dir=$HOME
 tmux=true
 odom_idx=0 #(0)Odometry_stragegy {"0=Frame-to-Map (F2M) 1=Frame-to-Frame (F2F) 2=Fovis 3=viso2 4=DVO-SLAM 5=ORB_SLAM2 6=OKVIS 7=LOAM 8=MSCKF_VIO 9=VINS-Fusion"}
+multip=0.2
 while [ "$3" != "" ]; do
     ARG=`echo $3 | awk -F= '{print $1}'`
     VAL=`echo $3 | awk -F= '{OFS="=";$1=""; printf substr($0,2)}'`
@@ -53,6 +57,9 @@ while [ "$3" != "" ]; do
             ;;
         --odom)
             odom_idx=$VAL
+            ;;
+        --mult)
+            multip=$VAL
             ;;
         *)
             echo "ERROR: unknown parameter \"$ARG\""; usage; exit 1
@@ -203,7 +210,7 @@ run(){
       fi
 
       sleep 7
-      inter_cmd=(rosrun data_to_rosbag pcd_to_png 2)
+      inter_cmd=(rosrun data_to_rosbag pcd_to_png -p 2 -r ${multip})
       if $tmux; then
         pane_id_inter=$(tmux split-window -P -F "#{pane_id}" "${inter_cmd[@]}");
       else
@@ -211,7 +218,7 @@ run(){
       fi
 
       sleep 3
-      rosrun data_to_rosbag kitti_live_node /home/icaminal/datasets/kitti/sequences/${seq_a[i]}
+      rosrun data_to_rosbag kitti_live_node /home/icaminal/datasets/kitti/sequences/${seq_a[i]} -r ${multip}
       sleep 29
       rosservice call /rtabmap/get_trajectory_data true true "$out_dir/poses_$out_name.txt"
 			retVal=$?
