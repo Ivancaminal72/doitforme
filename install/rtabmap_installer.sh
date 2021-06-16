@@ -8,12 +8,12 @@ project=rtabmap-release
 distro=melodic
 
 #Downlaod
-# cd $HOME/workspace/phd/rtabmap/
-# git clone https://github.com/introlab/${project}.git
-# mv ${project}/ ${project}_${distro}_${version}/
-# cd ${project}_${distro}_${version}/
-# git checkout release/${distro}/rtabmap/${version}
-# mv .git/ .git2/ #deactivate (multirepo w/ possible future modifications)
+cd $HOME/workspace/phd/rtabmap/
+git clone https://github.com/introlab/${project}.git
+mv ${project}/ ${project}_${distro}_${version}/
+cd ${project}_${distro}_${version}/
+git checkout release/${distro}/rtabmap/${version}
+mv .git/ .git2/ #deactivate (multirepo w/ possible future modifications)
 
 #Build (remote host?)
 cd $HOME/workspace/phd/rtabmap/${project}_${distro}_${version}/
