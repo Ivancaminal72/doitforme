@@ -1,7 +1,9 @@
 rosparam delete /terreslam/
 rosparam load ~/workspace/ros_ddd/src/terreslam/config.yaml
 rosrun terreslam rgb_depth_frontend &
+rosrun terreslam dd_keypoint_frontend &
 rosrun terreslam plane_detector_frontend &
+rosrun terreslam ddd_keypoint_frontend &
 rosrun terreslam blob_detector_frontend &
 rosrun terreslam metric_alignment_frontend &
 # sleep 3
