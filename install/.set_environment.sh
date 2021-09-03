@@ -13,8 +13,8 @@ environment() {
     setEV "CMAKE_PREFIX_PATH"   "$HOME/local/${1}_${2}"
     setEV "PATH"                "$HOME/local/${1}_${2}/bin"
     setEV "CMAKE_INCLUDE_PATH"  "$HOME/local/${1}_${2}/include"
-    setEV "CPATH"               "$HOME/local/${1}_${2}/include"                      
-    setEV "LIBRARY_PATH"        "$HOME/local/${1}_${2}/lib"           
+    setEV "CPATH"               "$HOME/local/${1}_${2}/include"
+    setEV "LIBRARY_PATH"        "$HOME/local/${1}_${2}/lib"
     setEV "LD_LIBRARY_PATH"     "$HOME/local/${1}_${2}/lib"
     setEV "CMAKE_LIBRARY_PATH"  "$HOME/local/${1}_${2}/lib"
     setEV "CMAKE_MODULE_PATH"   "$HOME/local/${1}_${2}/lib/cmake"
@@ -27,5 +27,6 @@ environment() {
 
 # environment "rtabmap-release_kinetic" "0.17.1-0"
 # environment "rtabmap-release_melodic" "0.17.1-0"
-environment "rtabmap-release_melodic" "0.19.3-2"
+# environment "rtabmap-release_melodic" "0.19.3-2"
+environment "rtabmap-release_noetic" "0.20.10-1"
 environment "opencv" "3.2.0"

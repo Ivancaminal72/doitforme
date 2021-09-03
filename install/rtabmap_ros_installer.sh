@@ -2,10 +2,12 @@
 
 #PARAMETERS
 # version=0.17.1-0
-version=0.19.3-1
+# version=0.19.3-1
+version=0.20.10-1
 project=rtabmap_ros
 # distro=kinetic
-distro=melodic
+# distro=melodic
+distro=noetic
 roscd && cd ..
 
 #Download
