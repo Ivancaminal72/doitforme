@@ -29,4 +29,5 @@ environment() {
 # environment "rtabmap-release_melodic" "0.17.1-0"
 # environment "rtabmap-release_melodic" "0.19.3-2"
 environment "rtabmap-release_noetic" "0.20.10-1"
-environment "opencv" "3.2.0"
+# environment "opencv" "3.2.0"
+environment "opencv" "4.2.0"
