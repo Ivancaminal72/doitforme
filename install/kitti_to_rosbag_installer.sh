@@ -2,7 +2,7 @@
 
 #Dependencies
 roscd && cd ../src
-git clone https://github.com/ethz-asl/minkindr.git
+# git clone https://github.com/ethz-asl/minkindr.git
 #(optional) git checkout 5b9fe7f21b58510c0cd8c1ef1aef376f77001ffe
 cd ..
 wstool init src
@@ -10,20 +10,22 @@ sudo apt-get install libgflags-dev
 cp src/minkindr/dependencies.rosinstall ~/workspace/ros_ddd/rosinstall_minkindr.rosinstall
 wstool merge -t src rosinstall_minkindr.rosinstall
 wstool update -t src
-catkin_make --only-pkg-with-deps glog_catkin -j$(nproc) | tee logs/glog_catkin.txt
-cd src
-git clone https://github.com/ethz-asl/catkin_boost_python_buildtool.git
-cd ..
-catkin_make --only-pkg-with-deps catkin_boost_python_buildtool -j$(nproc) | tee logs/catkin_boost_python_buildtool.txt
-cd src
-git clone https://github.com/ethz-asl/numpy_eigen.git
-cd ..
-catkin_make --only-pkg-with-deps numpy_eigen -j$(nproc) | tee logs/numpy_eigen.txt
-catkin_make -DCATKIN_WHITELIST_PACKAGES="" -j$(nproc) | tee logs/minkindr.txt
-cd src
-git clone https://github.com/ethz-asl/minkindr_ros.git
-cd ..
-catkin_make -DCATKIN_WHITELIST_PACKAGES="" -j$(nproc) | tee logs/minkindr_ros.txt
+# catkin_make --only-pkg-with-deps glog_catkin -j$(nproc) | tee logs/glog_catkin.txt
+# cd src
+# git clone https://github.com/ethz-asl/catkin_boost_python_buildtool.git
+# cd ..
+# catkin_make --only-pkg-with-deps catkin_boost_python_buildtool -j$(nproc) | tee logs/catkin_boost_python_buildtool.txt
+# cd src
+# git clone https://github.com/ethz-asl/numpy_eigen.git
+# cd ..
+# catkin_make --only-pkg-with-deps numpy_eigen -j$(nproc) | tee logs/numpy_eigen.txt
+# catkin_make -DCATKIN_WHITELIST_PACKAGES="" -j$(nproc) | tee logs/minkindr.txt
+# cd src
+# git clone https://github.com/ethz-asl/minkindr_ros.git
+# cd ..
+# catkin_make -DCATKIN_WHITELIST_PACKAGES="" -j$(nproc) | tee logs/minkindr_ros.txt
+sudo apt install ros-noetic-navigation
+catkin_make -DCATKIN_WHITELIST_PACKAGES="" -j$(nproc)
 rm -f ~/workspace/ros_ddd/rosinstall_minkindr.rosinstall
 
 #Downlaod & Build (remote host?)

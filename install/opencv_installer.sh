@@ -17,8 +17,8 @@ rm -f ${version}.tar.gz
 #Build (remote host?)
 cd opencv-${version}/
 mkdir build && cd build
-# cmake_gui >> configure >> add contrib path >> configure >> tick all OFF >> generate
-# cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/local/${project}-${version} \
+# cmake-gui >> configure >> add contrib path >> configure >> tick all OFF >> prefix & release >> generate
+# cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/local/${project}_${version} \
 #     -DOPENCV_EXTRA_MODULES_PATH=$HOME/workspace/phd/opencv/${project}_contrib-${version}/modules/ \
 #     -DENABLE_PRECOMPILED_HEADERS=OFF \
 #     -DBUILD_opencv_aruco=OFF \
